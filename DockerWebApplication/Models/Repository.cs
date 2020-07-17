@@ -47,7 +47,7 @@ namespace DockerWebApplication.Models
 
 
             List<Employee> model = null;
-            var task = _ihttpclient.GetAsync($"https://{myIP}:5000/api/Employe")
+            var task = _ihttpclient.GetAsync($"https://{myIP}:5001/api/Employe")
           .ContinueWith((taskwithresponse) =>
           {
               var response = taskwithresponse.Result;
@@ -70,7 +70,7 @@ namespace DockerWebApplication.Models
             string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
             var jsonInString = JsonConvert.SerializeObject(employee);
 
-            var result = await _ihttpclient.PostAsync($"https://{myIP}:5000/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
+            var result = await _ihttpclient.PostAsync($"https://{myIP}:5001/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
             if (result != null)
             {
                 return 1;
