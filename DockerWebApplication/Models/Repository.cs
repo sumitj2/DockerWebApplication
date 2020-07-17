@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 
@@ -19,15 +20,13 @@ namespace DockerWebApplication.Models
         }
         public async Task<List<Employee>> GetAllEmployee()
         {
-            //employees = await result.Content.ReadAsAsync < IList < Employee >>
-            //var employeelist = await _ihttpclient.GetAsync("https://localhost:32774/api/Employe");
-            //return employeelist;
-
-            //employeelist.EnsureSuccessStatusCode();
-            // var responseStream = await employeelist.Content.ReadAsStringAsync();
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
+            Console.WriteLine(hostName);
+            // Get the IP  
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
 
             List<Employee> model = null;
-            var task = _ihttpclient.GetAsync("https://localhost:32774/api/Employe")
+            var task = _ihttpclient.GetAsync($"https://{myIP}:5001/api/Employe")
           .ContinueWith((taskwithresponse) =>
           {
               var response = taskwithresponse.Result;
@@ -38,35 +37,19 @@ namespace DockerWebApplication.Models
             task.Wait();
 
             return model;
-
-
-            //IEnumerable<Employee> employees = null;
-
-            //using (var client = new HttpClient())
-            //{
-            //    client.BaseAddress = new Uri("https://localhost:32774/api/Employe");
-
-            //    var result = await client.GetAsync("employees/get");
-
-            //    if (result.IsSuccessStatusCode)
-            //    {
-            //        employees = await result.Content.ReadAsAsync<List<Employee>>();
-            //    }
-            //    else
-            //    {
-            //        employees = Enumerable.Empty<Employee>();
-            //        ModelState.AddModelError(string.Empty, "Server error try after some time.");
-            //    }
-            //}
-            //return View(employees);
+                    
         }
 
         public async Task<int> SaveEmployee(Employee employee)
         {
 
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
+            Console.WriteLine(hostName);
+            // Get the IP  
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
             var jsonInString = JsonConvert.SerializeObject(employee);
 
-            var result = await _ihttpclient.PostAsync("https://localhost:32774/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
+            var result = await _ihttpclient.PostAsync($"https://{myIP}:5001/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
             if (result != null)
             {
                 return 1;
