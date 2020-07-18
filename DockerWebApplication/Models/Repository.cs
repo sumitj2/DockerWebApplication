@@ -18,6 +18,10 @@ namespace DockerWebApplication.Models
         public Repository(HttpClient httpClient)
         {
             _ihttpclient = httpClient;
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+            _ihttpclient = new HttpClient(clientHandler);
         }
 
         static string GetIPAddress()
