@@ -20,6 +20,8 @@ namespace DockerWebApplication.Controllers
 
         public IActionResult Index()
         {
+          ViewData["ip"] = Environment.GetEnvironmentVariable("SERVICE-ADRESS");
+            ViewData["port"] = Environment.GetEnvironmentVariable("SERVICE-PORT");
             return View();
         }
 
