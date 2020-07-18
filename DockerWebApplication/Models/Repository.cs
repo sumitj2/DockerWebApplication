@@ -22,12 +22,7 @@ namespace DockerWebApplication.Models
         public Repository(HttpClient httpClient)
         {
             _ihttpclient = httpClient;
-            HttpClientHandler clientHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
-            };
-
-            _ihttpclient = new HttpClient(clientHandler);
+          
 
             myIP = Environment.GetEnvironmentVariable("SERVICE-ADRESS");
             port = Environment.GetEnvironmentVariable("SERVICE-PORT");
@@ -60,7 +55,7 @@ namespace DockerWebApplication.Models
             // string myIP = GetIPAddress();
 
             List<Employee> model = null;
-            await _ihttpclient.GetAsync($"https://{myIP}:{port}/api/Employe")
+            await _ihttpclient.GetAsync($"http://{myIP}:{port}/api/Employe")
           .ContinueWith((taskwithresponse) =>
           {
               var response = taskwithresponse.Result;
@@ -76,7 +71,7 @@ namespace DockerWebApplication.Models
         {
             var jsonInString = JsonConvert.SerializeObject(employee);
 
-            var result = await _ihttpclient.PostAsync($"https://{myIP}:{port}/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
+            var result = await _ihttpclient.PostAsync($"http://{myIP}:{port}/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
             if (result != null)
             {
                 return 1;
