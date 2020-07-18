@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 
 using System.Threading.Tasks;
@@ -15,13 +16,21 @@ namespace DockerWebApplication.Models
     {
         private HttpClient _ihttpclient;
 
+        private readonly string myIP;
+        private readonly string port;
+
         public Repository(HttpClient httpClient)
         {
             _ihttpclient = httpClient;
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            HttpClientHandler clientHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
 
             _ihttpclient = new HttpClient(clientHandler);
+
+            myIP = Environment.GetEnvironmentVariable("SERVICE-ADRESS");
+            port = Environment.GetEnvironmentVariable("SERVICE-PORT");
         }
 
         static string GetIPAddress()
@@ -40,20 +49,18 @@ namespace DockerWebApplication.Models
 
             return address;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Employee>> GetAllEmployee()
         {
-            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
-            Console.WriteLine(hostName);
             // Get the IP  
-            string myIP = GetIPAddress();//Dns.GetHostByName(hostName).AddressList[0].ToString();
+            // string myIP = GetIPAddress();
 
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-
-            _ihttpclient = new HttpClient(clientHandler);
-           
             List<Employee> model = null;
-            var task = _ihttpclient.GetAsync($"https://{myIP}:5001/api/Employe")
+            await _ihttpclient.GetAsync($"https://{myIP}:{port}/api/Employe")
           .ContinueWith((taskwithresponse) =>
           {
               var response = taskwithresponse.Result;
@@ -61,28 +68,20 @@ namespace DockerWebApplication.Models
               jsonString.Wait();
               model = JsonConvert.DeserializeObject<List<Employee>>(jsonString.Result);
           });
-            task.Wait();
 
             return model;
-                    
         }
 
         public async Task<int> SaveEmployee(Employee employee)
         {
-
-            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
-            Console.WriteLine(hostName);
-            // Get the IP  
-            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
             var jsonInString = JsonConvert.SerializeObject(employee);
 
-            var result = await _ihttpclient.PostAsync($"https://{myIP}:5001/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
+            var result = await _ihttpclient.PostAsync($"https://{myIP}:{port}/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
             if (result != null)
             {
                 return 1;
             }
             return 0;
-
         }
     }
 }
