@@ -43,9 +43,11 @@ namespace DockerWebApplication.Models
             // Get the IP  
             string myIP = GetIPAddress();//Dns.GetHostByName(hostName).AddressList[0].ToString();
 
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
-
-
+            _ihttpclient = new HttpClient(clientHandler);
+           
             List<Employee> model = null;
             var task = _ihttpclient.GetAsync($"https://{myIP}:5001/api/Employe")
           .ContinueWith((taskwithresponse) =>

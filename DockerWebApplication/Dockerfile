@@ -5,6 +5,9 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+#RUN dotnet tool install --global dotnet-dev-certs
+#RUN dotnet dev-certs https --trust
+
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["DockerWebApplication.csproj", "./"]
