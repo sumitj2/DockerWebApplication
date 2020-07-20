@@ -55,7 +55,7 @@ namespace DockerWebApplication.Models
             using (var client = new HttpClient())
             {
                 var request = new System.Net.Http.HttpRequestMessage();
-                request.RequestUri = new Uri("https://localhost:44366/api/Employee"); // ASP.NET 2.x
+                request.RequestUri = new Uri($"https://{myIP}:{port}/api/Employee"); // ASP.NET 2.x
                 var response = await client.SendAsync(request);
                 var jsonString = await response.Content.ReadAsStringAsync();
                 model = JsonConvert.DeserializeObject<List<Employee>>(jsonString);
@@ -69,7 +69,7 @@ namespace DockerWebApplication.Models
             using (var client = new HttpClient())
             {
                 var request = new System.Net.Http.HttpRequestMessage();
-                request.RequestUri = new Uri("https://localhost:44366/api/Employee"); // ASP.NET 2.x
+                request.RequestUri = new Uri($"https://{myIP}:{port}/api/Employee"); // ASP.NET 2.x
                 var response = await client.PostAsync(request.RequestUri, new StringContent(jsonInString, Encoding.UTF8, "application/json"));
                 if (response != null)
                 {
