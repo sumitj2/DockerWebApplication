@@ -55,7 +55,8 @@ namespace DockerWebApplication.Models
             // string myIP = GetIPAddress();
 
             List<Employee> model = null;
-            await _ihttpclient.GetAsync($"http://{myIP}:{port}/api/Employe")
+          //  await _ihttpclient.GetAsync($"http://{myIP}:{port}/api/Employe")
+            await _ihttpclient.GetAsync($"{myIP}:{port}/api/Employe")
           .ContinueWith((taskwithresponse) =>
           {
               var response = taskwithresponse.Result;
@@ -70,8 +71,8 @@ namespace DockerWebApplication.Models
         public async Task<int> SaveEmployee(Employee employee)
         {
             var jsonInString = JsonConvert.SerializeObject(employee);
-
-            var result = await _ihttpclient.PostAsync($"http://{myIP}:{port}/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
+            //var result = await _ihttpclient.PostAsync($"http://{myIP}:{port}/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
+            var result = await _ihttpclient.PostAsync($"{myIP}:{port}/api/Employe", new StringContent(jsonInString, Encoding.UTF8, "application/json"));
             if (result != null)
             {
                 return 1;
